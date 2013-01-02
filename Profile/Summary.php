@@ -45,7 +45,7 @@ use Quakelive, DOMDocument, DOMXPath, DateInterval, ArrayAccess, Iterator, Seria
 class Summary implements ArrayAccess, Iterator, Serializable {
 
 	/** url mask to profile page */
-	const QUAKELIVE_PROFILE_URL = '/home/haq/Workspace/QuakeLiveAPI/data/%s';
+	const QUAKELIVE_PROFILE_URL = 'http://www.quakelive.com/profile/summary/%s';
 
 	/** @var Quakelive\ArrayHash */
 	private $data;
