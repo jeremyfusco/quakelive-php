@@ -3,11 +3,10 @@
 /**
  * @package Quakelive API
  * @author Adam Klvač <adam@klva.cz>
- * @version 1.0.0
  */
 
 namespace Quakelive\Profile;
-use Quakelive, DOMDocument, DOMXPath, DateInterval, ArrayAccess, Iterator, Serializable;
+use Quakelive, DOMDocument, DOMXPath, DateInterval;
 
 /**
  * Represents Quakelive player's profile summary information
@@ -42,28 +41,17 @@ use Quakelive, DOMDocument, DOMXPath, DateInterval, ArrayAccess, Iterator, Seria
  * @property-read string|NULL $clan
  * @property-read int|NULL $clan->id
  */
-class Summary implements ArrayAccess, Iterator, Serializable {
+class Summary extends Quakelive\Profile\Result {
 
 	/** url mask to profile page */
-	const QUAKELIVE_PROFILE_URL = 'http://www.quakelive.com/profile/summary/%s';
-
-	/** @var Quakelive\ArrayHash */
-	private $data;
-
-	/**
-	 * @param Quakelive\Profile $profile
-	 */
-	public function __construct(Quakelive\Profile $profile) {
-		$this->data = self::fetch($profile);
-		$this->data->freeze();
-	}
+	const QUAKELIVE_PROFILE_URL = '/home/haq/Workspace/QuakeLiveAPI/data/summary/%s';
 
 	/**
 	 * Fetches data from server
 	 * @param Quakelive\Profile $profile
 	 * @return Quakelive\ArrayHash
 	 */
-	private static function fetch(Quakelive\Profile $profile) {
+	public static function fetch(Quakelive\Profile $profile) {
 
 		// Fetch HTML document
 		$url = @sprintf(self::QUAKELIVE_PROFILE_URL, $profile->getNickname());
@@ -179,105 +167,6 @@ class Summary implements ArrayAccess, Iterator, Serializable {
 
 		return $data;
 
-	}
-
-	/**
-	 * @param string $property
-	 * @return mixed
-	 */
-	public function __get($property) {
-		return $this->data->{$property};
-	}
-
-	/**
-	 * @param string $property
-	 * @param mixed $value
-	 * @return mixed
-	 */
-	public function __set($property, $value) {
-		throw new Quakelive\ApiException('Object is read only');
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return bool
-	 */
-	public function offsetExists($offset) {
-		return $this->data->offsetExists($offset);
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function offsetSet($offset, $value) {
-		$this->data->offsetSet($offset, $value);
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return mixed
-	 */
-	public function offsetGet($offset) {
-		return $this->data->offsetGet($offset);
-	}
-
-	/**
-	 * @param mixed $offset
-	 * @return void
-	 */
-	public function offsetUnset($offset) {
-		$this->data->offsetUnset($offset);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function rewind() {
-		$this->data->rewind();
-	}
-
-	/**
-	 * @return void
-	 */
-	public function next() {
-		$this->data->next();
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function valid() {
-		return $this->data->valid();
-	}
-
-	/**
-	 * @return scalar
-	 */
-	public function key() {
-		return $this->data->key();
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function current() {
-		return $this->data->current();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function serialize() {
-		return $this->data->serialize();
-	}
-
-	/**
-	 * @return void
-	 */
-	public function unserialize($serialized) {
-		$this->data->unserialize($serialized);
 	}
 
 }

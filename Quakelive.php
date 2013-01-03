@@ -3,14 +3,15 @@
 /**
  * @package Quakelive API
  * @author Adam Klvač <adam@klva.cz>
- * @version 1.0.0
  */
 
 require_once(__DIR__ . '/Exceptions.php');
 require_once(__DIR__ . '/ArrayHash.php');
 require_once(__DIR__ . '/DateTime.php');
 require_once(__DIR__ . '/Profile/Profile.php');
+require_once(__DIR__ . '/Profile/Result.php');
 require_once(__DIR__ . '/Profile/Summary.php');
+require_once(__DIR__ . '/Profile/Statistics.php');
 
 /**
  * Quakelive API wrapper

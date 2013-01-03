@@ -3,7 +3,6 @@
 /**
  * @package Quakelive API
  * @author Adam Klvač <adam@klva.cz>
- * @version 1.0.0
  */
 
 namespace Quakelive;

@@ -3,7 +3,6 @@
 /**
  * @package Quakelive API
  * @author Adam Klvač <adam@klva.cz>
- * @version 1.0.0
  */
 
 namespace Quakelive;
@@ -23,6 +22,9 @@ class Profile {
 	/** @var Quakelive\Player\Summary */
 	private $summary;
 
+	/** @var Quakelive\Player\Statistics */
+	private $statistics;
+
 	/**
 	 * @param string $nickname
 	 */
@@ -39,6 +41,15 @@ class Profile {
 	public function getSummary() {
 		if(!$this->summary) $this->summary = new Quakelive\Profile\Summary($this);
 		return $this->summary;
+	}
+
+	/**
+	 * Returns statistics
+	 * @return Quakelive\Profile\Statistics
+	 */
+	public function getStatistics() {
+		if(!$this->statistics) $this->statistics = new Quakelive\Profile\Statistics($this);
+		return $this->statistics;
 	}
 
 	/**
