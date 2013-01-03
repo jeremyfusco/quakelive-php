@@ -44,7 +44,7 @@ use Quakelive, DOMDocument, DOMXPath, DateInterval;
 class Summary extends Quakelive\Profile\Result {
 
 	/** url mask to profile page */
-	const QUAKELIVE_PROFILE_URL = '/home/haq/Workspace/QuakeLiveAPI/data/summary/%s';
+	const QUAKELIVE_PROFILE_URL = 'http://www.quakelive.com/profile/summary/%s';
 
 	/**
 	 * Fetches data from server
