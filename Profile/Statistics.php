@@ -14,7 +14,7 @@ use Quakelive, DOMDocument, DOMXPath;
 class Statistics extends Quakelive\Profile\Result {
 
 	/** url mask to profile page */
-	const QUAKELIVE_STATISTICS_URL = '/home/haq/Workspace/QuakeLiveAPI/data/statistics/%s';
+	const QUAKELIVE_STATISTICS_URL = 'www.quakelive.com/profile/statistics/%s';
 
 	/**
 	 * Fetches data from server
