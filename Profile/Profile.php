@@ -6,7 +6,7 @@
  */
 
 namespace Quakelive;
-use Quakelive;
+use Quakelive, DOMDocument, DOMXPath;
 
 /**
  * Represents Quakelive player's profile
@@ -36,10 +36,13 @@ class Profile {
 
 	/**
 	 * Returns profile summary info
+	 * @param DOMDocument $dom
+	 * @param DOMXPath $finder
 	 * @return Quakelive\Profile\Summary
+	 * Pass $dom and $finder for parsing summary info (2 requests for summary and statistics/matches etc are not necessary)
 	 */
-	public function getSummary() {
-		if(!$this->summary) $this->summary = new Quakelive\Profile\Summary($this);
+	public function getSummary(DOMDocument $dom = null, DOMXPath $finder = null) {
+		if(!$this->summary) $this->summary = new Quakelive\Profile\Summary($this, $dom, $finder);
 		return $this->summary;
 	}
 
@@ -48,7 +51,7 @@ class Profile {
 	 * @return Quakelive\Profile\Statistics
 	 */
 	public function getStatistics() {
-		if(!$this->statistics) $this->statistics = new Quakelive\Profile\Statistics($this);
+		if(!$this->statistics) $this->statistics = new Quakelive\Profile\Statistics($this, (bool) $this->statistics);
 		return $this->statistics;
 	}
 

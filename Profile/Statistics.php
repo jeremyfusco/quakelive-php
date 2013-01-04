@@ -17,11 +17,21 @@ class Statistics extends Quakelive\Profile\Result {
 	const QUAKELIVE_STATISTICS_URL = 'http://www.quakelive.com/profile/statistics/%s';
 
 	/**
+	 * @param Quakelive\Profile $profile
+	 * @param bool $statistics_parsed
+	 */
+	public function __construct(Quakelive\Profile $profile, $statistics_parsed) {
+		$this->data = self::fetch($profile, $statistics_parsed);
+		$this->data->freeze();
+	}
+
+	/**
 	 * Fetches data from server
 	 * @param Quakelive\Profile $profile
+	 * @param bool $statistics_parsed
 	 * @return Quakelive\ArrayHash
 	 */
-	public static function fetch(Quakelive\Profile $profile) {
+	public static function fetch(Quakelive\Profile $profile, $statistics_parsed = true) {
 
 		// Fetch HTML document
 		$url = @sprintf(self::QUAKELIVE_STATISTICS_URL, $profile->getNickname());
@@ -87,6 +97,61 @@ class Statistics extends Quakelive\Profile\Result {
 			$data->weapons->{$offsets[$wid]}->use = (int) str_replace('%', '', $row->nodeValue);
 			$wid++;
 		}
+
+		// Records
+		$table = $finder->query("//div[@class = 'prf_record']/div/div");
+		$data->records = new Quakelive\ArrayHash;
+		unset($offset);
+		foreach($table as $row) {
+			if(!isset($offset) && (!$row->attributes->getNamedItem('class') || $row->nodeValue === '')) continue;
+			if($row->attributes->getNamedItem('class')->nodeValue === 'col_st_gametype') {
+				$image = $finder->query("img", $row)->item(0);
+				if(!$image) break;
+				preg_match('/\/xsm\/(.+?)_/', $image->attributes->getNamedItem('src')->nodeValue, $matches);
+				$offset = $matches[1];
+				$data->records->{$offset} = new Quakelive\ArrayHash;
+				$data->records->{$offset}->image = $image->attributes->getNamedItem('src')->nodeValue;
+				$data->records->{$offset}->name = trim($row->nodeValue);
+			}
+			if($row->attributes->getNamedItem('class')->nodeValue === 'col_st_view') {
+				unset($offset);
+				continue;
+			}
+			$column = substr($row->attributes->getNamedItem('class')->nodeValue, 7);
+			switch($column) {
+				case 'gametype':
+				break;
+				case 'completeperc':
+					$data->records->{$offset}->completeperc =
+						$data->records->{$offset}->played > 0 ?
+						$data->records->{$offset}->finished / $data->records->{$offset}->played * 100 : 0;
+				break;
+				case 'winperc':
+					$data->records->{$offset}->winperc =
+						$data->records->{$offset}->played > 0 ?
+						$data->records->{$offset}->wins / $data->records->{$offset}->played * 100 : 0;
+				break;
+				default:
+					$data->records->{$offset}->{$column} = intval(str_replace(',', '', $row->nodeValue));
+				break;
+			}
+		}
+
+		// Collect skill levels
+		$keys = $finder->query("//div[@class = 'keys']/img");
+		$bars = $finder->query("//div[@class = 'bars']/div");
+		$data->skills = new Quakelive\ArrayHash;
+		foreach($keys as $index => $row) {
+			$offset = substr($row->attributes->getNamedItem('class')->nodeValue, 8);
+			$data->skills->{$offset} = new Quakelive\ArrayHash;
+			$data->skills->{$offset}->name = $row->attributes->getNamedItem('title')->nodeValue;
+			$data->skills->{$offset}->image = $row->attributes->getNamedItem('src')->nodeValue;
+			preg_match('/^height: (\d+?)%/', $bars->item($index)->attributes->getNamedItem('style')->nodeValue, $matches);
+			$data->skills->{$offset}->level = intval($matches[1]) / 25;
+		}
+
+		// Parse summary if needed
+		if(!$statistics_parsed) $profile->getSummary($dom, $finder);
 
 		return $data;
 

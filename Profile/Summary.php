@@ -47,23 +47,36 @@ class Summary extends Quakelive\Profile\Result {
 	const QUAKELIVE_PROFILE_URL = 'http://www.quakelive.com/profile/summary/%s';
 
 	/**
+	 * @param Quakelive\Profile $profile
+	 * @param DOMDocument $dom
+	 * @param DOMXPath $finder
+	 */
+	public function __construct(Quakelive\Profile $profile, DOMDocument $dom = null, DOMXPath $finder = null) {
+		$this->data = self::fetch($profile, $dom, $finder);
+		$this->data->freeze();
+	}
+
+	/**
 	 * Fetches data from server
 	 * @param Quakelive\Profile $profile
+	 * @param DOMDocument $dom
+	 * @param DOMXPath $finder
 	 * @return Quakelive\ArrayHash
 	 */
-	public static function fetch(Quakelive\Profile $profile) {
+	public static function fetch(Quakelive\Profile $profile, DOMDocument $dom = null, DOMXPath $finder = null) {
 
 		// Fetch HTML document
-		$url = @sprintf(self::QUAKELIVE_PROFILE_URL, $profile->getNickname());
-		if(!$url)
-			throw new Quakelive\ApiException('Invalid ' . __CLASS__ . '::QUAKELIVE_PROFILE_URL');
-		$dom = new DOMDocument;
-		@$dom->loadHTMLFile($url); // Suppress errors in HTML document
-		if(!$dom->doctype)
-			throw new Quakelive\RequestException('Unable to fetch data from server');
-
-		// Create finder
-		$finder = new DOMXPath($dom);
+		if(!$dom) {
+			$url = @sprintf(self::QUAKELIVE_PROFILE_URL, $profile->getNickname());
+			if(!$url)
+				throw new Quakelive\ApiException('Invalid ' . __CLASS__ . '::QUAKELIVE_PROFILE_URL');
+			$dom = new DOMDocument;
+			@$dom->loadHTMLFile($url); // Suppress errors in HTML document
+			if(!$dom->doctype)
+				throw new Quakelive\RequestException('Unable to fetch data from server');
+			// Create finder
+			if(!$finder) $finder = new DOMXPath($dom);
+		}
 
 		// Result array
 		$data = new Quakelive\ArrayHash;

@@ -17,14 +17,6 @@ abstract class Result implements ArrayAccess, Iterator, Serializable, IResult {
 	protected $data;
 
 	/**
-	 * @param Quakelive\Profile $profile
-	 */
-	public function __construct(Quakelive\Profile $profile) {
-		$this->data = $this::fetch($profile);
-		$this->data->freeze();
-	}
-
-	/**
 	 * @param string $property
 	 * @return mixed
 	 */
