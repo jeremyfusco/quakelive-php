@@ -112,7 +112,7 @@ abstract class Result implements ArrayAccess, Iterator, Serializable, IResult {
 	 * @return void
 	 */
 	public function unserialize($serialized) {
-		$this->data->unserialize($serialized);
+		$this->data = unserialize($serialized);
 	}
 
 }
